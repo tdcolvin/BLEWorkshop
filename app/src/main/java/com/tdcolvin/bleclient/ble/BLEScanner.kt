@@ -3,6 +3,7 @@ package com.tdcolvin.bleclient.ble
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,16 @@ class BLEScanner(context: Context) {
         2. Override method onScanFailed - this is called when there was a problem which meant the
            scan couldn't start. Your code should set isScanning.value to false.
         */
+
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            super.onScanResult(callbackType, result)
+            foundDevice(result.device)
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            isScanning.value = false
+        }
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_SCAN)
@@ -41,6 +52,7 @@ class BLEScanner(context: Context) {
         //      Hint: scanner.startScan(...)
 
         isScanning.value = true
+        scanner.startScan(scanCallback)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_SCAN)
@@ -48,6 +60,7 @@ class BLEScanner(context: Context) {
         //TODO: Start the scanner. Use the 'scanner' and 'scanCallback' objects above.
         //      Hint: scanner.stopScan(...)
 
+        scanner.stopScan(scanCallback)
         isScanning.value = false
     }
 
