@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.content.Context
-import android.util.Log
+import android.os.Build
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -110,26 +110,65 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
               Add methods to this class as directed above, whenever you need do something as a result
               of what the device returns to us.
          */
+        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            super.onConnectionStateChange(gatt, status, newState)
+            isConnected.value = (newState == BluetoothGatt.STATE_CONNECTED)
+        }
+
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            super.onServicesDiscovered(gatt, status)
+            services.value = gatt.services
+        }
+
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            status: Int
+        ) {
+            super.onCharacteristicRead(gatt, characteristic, status)
+            passwordRead.value = String(characteristic.value)
+        }
+
+        override fun onCharacteristicWrite(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            status: Int
+        ) {
+            super.onCharacteristicWrite(gatt, characteristic, status)
+            if (status == BluetoothGatt.GATT_SUCCESS && characteristic.value.contentEquals("Tom".toByteArray())) {
+                successfulNameWrites.update { it + 1 }
+            }
+        }
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun connect() {
-        //TODO: connect the GATT as directed in task 1 above
+        gatt = bluetoothDevice.connectGatt(context, false, callback)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun discoverServices() {
-        //TODO: discover services as directed in task 2 above
+        gatt?.discoverServices()
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun readPassword() {
-        //TODO: read from the password characteristic as directed in task 3 above.
+        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val characteristic = service.getCharacteristic(PASSWORD_CHARACTERISTIC_UUID) ?: return
+        gatt?.readCharacteristic(characteristic)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun writeName() {
-        //TODO: write your name to the name characteristic as directed in task 4 above.
+        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val characteristic = service.getCharacteristic(NAME_CHARACTERISTIC_UUID) ?: return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            gatt?.writeCharacteristic(characteristic, "Tom".toByteArray(), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+        }
+        else {
+            characteristic.value = "Tom".toByteArray()
+            gatt?.writeCharacteristic(characteristic)
+        }
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
