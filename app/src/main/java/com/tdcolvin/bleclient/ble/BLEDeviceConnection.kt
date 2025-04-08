@@ -3,16 +3,13 @@ package com.tdcolvin.bleclient.ble
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.content.Context
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import java.util.UUID
 
-val DEVFEST_SERVICE_UUID: UUID = UUID.fromString("8c380000-10bd-4fdb-ba21-1922d6cf860d")
+val CTF_SERVICE_UUID: UUID = UUID.fromString("8c380000-10bd-4fdb-ba21-1922d6cf860d")
 val PASSWORD_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380001-10bd-4fdb-ba21-1922d6cf860d")
 val NAME_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380002-10bd-4fdb-ba21-1922d6cf860d")
 val FLAG_2_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380003-10bd-4fdb-ba21-1922d6cf860d")
@@ -71,8 +68,8 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     ========================================
     The readPassword() function is called whenever the user asks to read the password characteristic
     (that's the characteristic with the UUID PASSWORD_CHARACTERISTIC_UUID defined above).
-        1. In the readPassword() function, get the Devfest service:
-           val service = gatt?.getService(DEVFEST_SERVICE_UUID)
+        1. In the readPassword() function, get the CTF service:
+           val service = gatt?.getService(CTF_SERVICE_UUID)
         2. Get the password characteristic:
            val characteristic = service?.getCharacteristic(PASSWORD_CHARACTERISTIC_UUID)
         3. If succeeded (i.e. if `characteristic` is non-null), ask the GATT to read from it:
@@ -85,7 +82,7 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
            ) { ... }
            This function should set passwordRead.value to the characteristic's value.
 
-     Run and test: Scan and connect to the Devfest device, and you should be able to read the
+     Run and test: Scan and connect to the CTF device, and you should be able to read the
      password.
      */
 

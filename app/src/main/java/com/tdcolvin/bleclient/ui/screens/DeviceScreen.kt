@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tdcolvin.bleclient.ble.DEVFEST_SERVICE_UUID
+import com.tdcolvin.bleclient.ble.CTF_SERVICE_UUID
 
 @Composable
 fun DeviceScreen(
@@ -31,7 +31,7 @@ fun DeviceScreen(
     startNotifyFlag2: () -> Unit,
     stopNotifyFlag2: () -> Unit
 ) {
-    val foundTargetService = discoveredCharacteristics.contains(DEVFEST_SERVICE_UUID.toString())
+    val foundTargetService = discoveredCharacteristics.contains(CTF_SERVICE_UUID.toString())
 
     Column(
         modifier.verticalScroll(rememberScrollState())
