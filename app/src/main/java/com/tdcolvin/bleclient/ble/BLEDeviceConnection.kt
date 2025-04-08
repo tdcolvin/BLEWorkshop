@@ -15,6 +15,7 @@ import java.util.UUID
 val DEVFEST_SERVICE_UUID: UUID = UUID.fromString("8c380000-10bd-4fdb-ba21-1922d6cf860d")
 val PASSWORD_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380001-10bd-4fdb-ba21-1922d6cf860d")
 val NAME_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380002-10bd-4fdb-ba21-1922d6cf860d")
+val FLAG_2_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380003-10bd-4fdb-ba21-1922d6cf860d")
 
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") constructor(
@@ -24,6 +25,7 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     val isConnected = MutableStateFlow(false)
     val passwordRead = MutableStateFlow<String?>(null)
     val successfulNameWrites = MutableStateFlow(0)
+    val flag2Value = MutableStateFlow<String?>(null)
     val services = MutableStateFlow<List<BluetoothGattService>>(emptyList())
 
     private var gatt: BluetoothGatt? = null
@@ -130,6 +132,16 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun writeName() {
         //TODO: write your name to the name characteristic as directed in task 4 above.
+    }
+
+    @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
+    fun startNotifyForFlag2() {
+        //TODO: request to start receiving notifications for flag 2, as directed in task 5 above
+    }
+
+    @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
+    fun stopNotifyForFlag2() {
+        //TODO: stop notifications for flag 2 as directed in task 5 above
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)

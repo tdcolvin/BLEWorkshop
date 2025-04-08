@@ -56,10 +56,13 @@ fun MainNavigation(
             discoveredCharacteristics = uiState.discoveredCharacteristics,
             password = uiState.password,
             nameWrittenTimes = uiState.nameWrittenTimes,
+            flag2 = uiState.flag2Value,
             connect = viewModel::connectActiveDevice,
             discoverServices = viewModel::discoverActiveDeviceServices,
             readPassword = viewModel::readPasswordFromActiveDevice,
-            writeName = viewModel::writeNameToActiveDevice
+            writeName = viewModel::writeNameToActiveDevice,
+            startNotifyFlag2 = viewModel::startNotifyForFlag2,
+            stopNotifyFlag2 = viewModel::stopNotifyForFlag2
         )
     }
 }

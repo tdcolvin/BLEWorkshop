@@ -1,6 +1,8 @@
 package com.tdcolvin.bleclient.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,10 +23,13 @@ fun DeviceScreen(
     discoveredCharacteristics: Map<String, List<String>>,
     password: String?,
     nameWrittenTimes: Int,
+    flag2: String?,
     connect: () -> Unit,
     discoverServices: () -> Unit,
     readPassword: () -> Unit,
-    writeName: () -> Unit
+    writeName: () -> Unit,
+    startNotifyFlag2: () -> Unit,
+    stopNotifyFlag2: () -> Unit
 ) {
     val foundTargetService = discoveredCharacteristics.contains(DEVFEST_SERVICE_UUID.toString())
 
@@ -57,6 +62,19 @@ fun DeviceScreen(
         }
         if (nameWrittenTimes > 0) {
             Text("Successful writes: $nameWrittenTimes")
+        }
+
+        Button(onClick = startNotifyFlag2) {
+            Text("5. Get notifications for flag #2")
+        }
+        if (flag2 != null) {
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                Text("Current flag 2 value: $flag2")
+
+                Button(onClick = stopNotifyFlag2) {
+                    Text("Stop notifications")
+                }
+            }
         }
 
         OutlinedButton(modifier = Modifier.padding(top = 40.dp),  onClick = unselectDevice) {

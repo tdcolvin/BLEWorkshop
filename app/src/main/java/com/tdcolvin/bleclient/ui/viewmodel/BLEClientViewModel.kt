@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattService
 import android.content.pm.PackageManager
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
@@ -38,6 +39,9 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
     private val activeDeviceNameWrittenTimes = activeConnection.flatMapLatest {
         it?.successfulNameWrites ?: flowOf(0)
     }
+    private val activeDeviceFlag2Value = activeConnection.flatMapLatest {
+        it?.flag2Value ?: flowOf(null)
+    }
 
     private val _uiState = MutableStateFlow(BLEClientUIState())
     val uiState = combine(
@@ -45,13 +49,25 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
         isDeviceConnected,
         activeDeviceServices,
         activeDevicePassword,
-        activeDeviceNameWrittenTimes
-    ) { state, isDeviceConnected, services, password, nameWrittenTimes ->
+        activeDeviceNameWrittenTimes,
+        activeDeviceFlag2Value
+    ) { values ->
+        // Limitation of Kotlin here! Would be better to use combine()'s fixed format, but that only
+        // supports up to 5 args! Same as array destructuring.
+        val state = values[0] as BLEClientUIState
+        val isDeviceConnected = values[1] as Boolean
+        @Suppress("UNCHECKED_CAST")
+        val services = values[2] as List<BluetoothGattService>
+        val password = values[3] as String?
+        val nameWrittenTimes = values[4] as Int
+        val flag2Value = values[5] as String?
+
         state.copy(
             isDeviceConnected = isDeviceConnected,
             discoveredCharacteristics = services.associate { service -> Pair(service.uuid.toString(), service.characteristics.map { it.uuid.toString() }) },
             password = password,
-            nameWrittenTimes = nameWrittenTimes
+            nameWrittenTimes = nameWrittenTimes,
+            flag2Value = flag2Value
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BLEClientUIState())
 
@@ -110,6 +126,16 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
         activeConnection.value?.writeName()
     }
 
+    @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
+    fun startNotifyForFlag2() {
+        activeConnection.value?.startNotifyForFlag2()
+    }
+
+    @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
+    fun stopNotifyForFlag2() {
+        activeConnection.value?.stopNotifyForFlag2()
+    }
+
     override fun onCleared() {
         super.onCleared()
 
@@ -133,5 +159,6 @@ data class BLEClientUIState(
     val isDeviceConnected: Boolean = false,
     val discoveredCharacteristics: Map<String, List<String>> = emptyMap(),
     val password: String? = null,
-    val nameWrittenTimes: Int = 0
+    val nameWrittenTimes: Int = 0,
+    val flag2Value: String? = null
 )
