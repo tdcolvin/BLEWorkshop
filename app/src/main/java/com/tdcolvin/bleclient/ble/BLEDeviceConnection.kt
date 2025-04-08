@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.content.Context
 import android.os.Build
@@ -141,6 +142,14 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
                 successfulNameWrites.update { it + 1 }
             }
         }
+
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            super.onCharacteristicChanged(gatt, characteristic)
+            flag2Value.value = String(characteristic.value)
+        }
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
@@ -176,11 +185,33 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun startNotifyForFlag2() {
         //TODO: request to start receiving notifications for flag 2, as directed in task 5 above
+
+        val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+
+        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val characteristic = service.getCharacteristic(FLAG_2_CHARACTERISTIC_UUID) ?: return
+        val notifyDescriptor = characteristic.getDescriptor(cccdUuid) ?: return
+
+        notifyDescriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+        gatt?.writeDescriptor(notifyDescriptor)
+
+        gatt?.setCharacteristicNotification(characteristic, true)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun stopNotifyForFlag2() {
         //TODO: stop notifications for flag 2 as directed in task 5 above
+
+        val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+
+        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val characteristic = service.getCharacteristic(FLAG_2_CHARACTERISTIC_UUID) ?: return
+
+        gatt?.setCharacteristicNotification(characteristic, false)
+
+        val notifyDescriptor = characteristic.getDescriptor(cccdUuid) ?: return
+        notifyDescriptor.value = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+        gatt?.writeDescriptor(notifyDescriptor)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
