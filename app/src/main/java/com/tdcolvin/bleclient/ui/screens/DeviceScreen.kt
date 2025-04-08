@@ -64,8 +64,8 @@ fun DeviceScreen(
             Text("Successful writes: $nameWrittenTimes")
         }
 
-        Button(onClick = startNotifyFlag2) {
-            Text("5. Get notifications for flag #2")
+        Button(onClick = startNotifyFlag2, enabled = isDeviceConnected && foundTargetService) {
+            Text("5. Get Notifications for Flag #2")
         }
         if (flag2 != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
