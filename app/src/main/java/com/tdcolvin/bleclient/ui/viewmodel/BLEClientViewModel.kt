@@ -33,8 +33,8 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
     private val activeDeviceServices = activeConnection.flatMapLatest {
         it?.services ?: flowOf(emptyList())
     }
-    private val activeDevicePassword = activeConnection.flatMapLatest {
-        it?.passwordRead ?: flowOf(null)
+    private val activeDeviceFlag1 = activeConnection.flatMapLatest {
+        it?.flag1Read ?: flowOf(null)
     }
     private val activeDeviceNameWrittenTimes = activeConnection.flatMapLatest {
         it?.successfulNameWrites ?: flowOf(0)
@@ -48,7 +48,7 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
         _uiState,
         isDeviceConnected,
         activeDeviceServices,
-        activeDevicePassword,
+        activeDeviceFlag1,
         activeDeviceNameWrittenTimes,
         activeDeviceFlag2Value
     ) { values ->
@@ -58,14 +58,14 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
         val isDeviceConnected = values[1] as Boolean
         @Suppress("UNCHECKED_CAST")
         val services = values[2] as List<BluetoothGattService>
-        val password = values[3] as String?
+        val flag1 = values[3] as String?
         val nameWrittenTimes = values[4] as Int
         val flag2Value = values[5] as String?
 
         state.copy(
             isDeviceConnected = isDeviceConnected,
             discoveredCharacteristics = services.associate { service -> Pair(service.uuid.toString(), service.characteristics.map { it.uuid.toString() }) },
-            password = password,
+            flag1 = flag1,
             nameWrittenTimes = nameWrittenTimes,
             flag2Value = flag2Value
         )
@@ -117,8 +117,8 @@ class BLEClientViewModel(private val application: Application): AndroidViewModel
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
-    fun readPasswordFromActiveDevice() {
-        activeConnection.value?.readPassword()
+    fun readFlag1FromActiveDevice() {
+        activeConnection.value?.readFlag1()
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
@@ -158,7 +158,7 @@ data class BLEClientUIState(
     val activeDevice: BluetoothDevice? = null,
     val isDeviceConnected: Boolean = false,
     val discoveredCharacteristics: Map<String, List<String>> = emptyMap(),
-    val password: String? = null,
+    val flag1: String? = null,
     val nameWrittenTimes: Int = 0,
     val flag2Value: String? = null
 )
