@@ -14,6 +14,8 @@ val PASSWORD_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380001-10bd-4fdb-ba2
 val NAME_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380002-10bd-4fdb-ba21-1922d6cf860d")
 val FLAG_2_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380003-10bd-4fdb-ba21-1922d6cf860d")
 
+val CCCD_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") constructor(
     private val context: Context,
@@ -99,6 +101,36 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
            receive confirmation that the write was successful or otherwise.
            Check status, and if good, increment successfulNameWrites:
            successfulNameWrites.update { it + 1 }
+    */
+
+
+    /*
+    TASK 5: Get notifications for flag #2
+    =====================================
+    The startNotifyForFlag2() function is called when the user wishes to start notifications, and
+    stopNotifyForFlag2() is called when they wish to stop.
+
+    A bit of background.
+    To start notifications you have to: write BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE to
+    the characteristic's CCCD = "client characteristic configuration descriptor", and then enable
+    notifications at the GATT server level.
+
+    To get the CCCD:
+        1. Get the flag 2 characteristic using the method in previous tasks. Its UUID is provided
+           above as FLAG_2_CHARACTERISTIC_UUID.
+        2. Get the CCCD descriptor using characteristic.getDescriptor(...). The UUID of the CCCD is
+           provided in the constants above as CCCD_UUID.
+
+    Then write the enable value to the CCCD:
+        3. Call gatt?.writeDescriptor(...). The value to write is
+           BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE.
+
+    Finally, enable notifications:
+        4. Call gatt?.setCharacteristicNotification(...).
+
+    To disable notifications in the stopNotifyForFlag2() function, write
+    BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE to the CCCD and call
+    gatt?.setCharacteristicNotification(...) with a 'false' argument.
     */
 
 
