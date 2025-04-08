@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 val CTF_SERVICE_UUID: UUID = UUID.fromString("8c380000-10bd-4fdb-ba21-1922d6cf860d")
-val PASSWORD_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380001-10bd-4fdb-ba21-1922d6cf860d")
+val FLAG_1_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380001-10bd-4fdb-ba21-1922d6cf860d")
 val NAME_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380002-10bd-4fdb-ba21-1922d6cf860d")
 val FLAG_2_CHARACTERISTIC_UUID: UUID = UUID.fromString("8c380003-10bd-4fdb-ba21-1922d6cf860d")
 
@@ -26,7 +26,7 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     private val bluetoothDevice: BluetoothDevice
 ) {
     val isConnected = MutableStateFlow(false)
-    val passwordRead = MutableStateFlow<String?>(null)
+    val flag1Read = MutableStateFlow<String?>(null)
     val successfulNameWrites = MutableStateFlow(0)
     val flag2Value = MutableStateFlow<String?>(null)
     val services = MutableStateFlow<List<BluetoothGattService>>(emptyList())
@@ -70,14 +70,14 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
 
 
     /*
-    TASK 3: Read the password characteristic
+    TASK 3: Read the flag1 characteristic
     ========================================
-    The readPassword() function is called whenever the user asks to read the password characteristic
-    (that's the characteristic with the UUID PASSWORD_CHARACTERISTIC_UUID defined above).
-        1. In the readPassword() function, get the CTF service:
+    The readFlag1() function is called whenever the user asks to read the flag1 characteristic
+    (that's the characteristic with the UUID FLAG_1_CHARACTERISTIC_UUID defined above).
+        1. In the readFlag1() function, get the CTF service:
            val service = gatt?.getService(CTF_SERVICE_UUID)
-        2. Get the password characteristic:
-           val characteristic = service?.getCharacteristic(PASSWORD_CHARACTERISTIC_UUID)
+        2. Get the flag1 characteristic:
+           val characteristic = service?.getCharacteristic(FLAG_1_CHARACTERISTIC_UUID)
         3. If succeeded (i.e. if `characteristic` is non-null), ask the GATT to read from it:
            gatt?.readCharacteristic(...)
         4. Implement onCharacteristicRead in the BluetoothGattCallback:
@@ -86,10 +86,10 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
                characteristic: BluetoothGattCharacteristic,
                status: Int
            ) { ... }
-           This function should set passwordRead.value to the characteristic's value.
+           This function should set flag1Read.value to the characteristic's value.
 
      Run and test: Scan and connect to the CTF device, and you should be able to read the
-     password.
+     flag1.
      */
 
 
@@ -161,7 +161,7 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
             status: Int
         ) {
             super.onCharacteristicRead(gatt, characteristic, status)
-            passwordRead.value = String(characteristic.value)
+            flag1Read.value = String(characteristic.value)
         }
 
         override fun onCharacteristicWrite(
@@ -195,9 +195,9 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
-    fun readPassword() {
+    fun readFlag1() {
         val service = gatt?.getService(CTF_SERVICE_UUID) ?: return
-        val characteristic = service.getCharacteristic(PASSWORD_CHARACTERISTIC_UUID) ?: return
+        val characteristic = service.getCharacteristic(FLAG_1_CHARACTERISTIC_UUID) ?: return
         gatt?.readCharacteristic(characteristic)
     }
 

@@ -21,12 +21,12 @@ fun DeviceScreen(
     unselectDevice: () -> Unit,
     isDeviceConnected: Boolean,
     discoveredCharacteristics: Map<String, List<String>>,
-    password: String?,
+    flag1: String?,
     nameWrittenTimes: Int,
     flag2: String?,
     connect: () -> Unit,
     discoverServices: () -> Unit,
-    readPassword: () -> Unit,
+    readFlag1: () -> Unit,
     writeName: () -> Unit,
     startNotifyFlag2: () -> Unit,
     stopNotifyFlag2: () -> Unit
@@ -51,11 +51,11 @@ fun DeviceScreen(
                     }
                 }
             }
-        Button(onClick = readPassword, enabled = isDeviceConnected && foundTargetService) {
-            Text("3. Read Password")
+        Button(onClick = readFlag1, enabled = isDeviceConnected && foundTargetService) {
+            Text("3. Read Flag 1")
         }
-        if (password != null) {
-            Text("Found password: $password")
+        if (flag1 != null) {
+            Text("Found flag 1: $flag1")
         }
         Button(onClick = writeName, enabled = isDeviceConnected && foundTargetService) {
             Text("4. Write Your Name")
