@@ -68,12 +68,10 @@ fun DeviceScreen(
             Text("5. Get Notifications for Flag #2")
         }
         if (flag2 != null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Text("Current flag 2 value: $flag2")
+            Text("Current flag 2 value: $flag2")
 
-                Button(onClick = stopNotifyFlag2) {
-                    Text("Stop notifications")
-                }
+            Button(modifier = Modifier.padding(start = 20.dp), onClick = stopNotifyFlag2) {
+                Text("Stop notifications")
             }
         }
 
