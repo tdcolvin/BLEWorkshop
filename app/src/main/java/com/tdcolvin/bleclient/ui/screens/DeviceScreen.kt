@@ -1,12 +1,9 @@
 package com.tdcolvin.bleclient.ui.screens
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -32,7 +29,7 @@ fun DeviceScreen(
     val foundTargetService = discoveredCharacteristics.contains(DEVFEST_SERVICE_UUID.toString())
 
     Column(
-        modifier.scrollable(rememberScrollState(), Orientation.Vertical)
+        modifier.verticalScroll(rememberScrollState())
     ) {
         Button(onClick = connect) {
             Text("1. Connect")
@@ -41,8 +38,7 @@ fun DeviceScreen(
         Button(onClick = discoverServices, enabled = isDeviceConnected) {
             Text("2. Discover Services")
         }
-        LazyColumn(userScrollEnabled = false) {
-            items(discoveredCharacteristics.keys.sorted()) { serviceUuid ->
+            discoveredCharacteristics.keys.sorted().forEach { serviceUuid ->
                 Text(text = serviceUuid, fontWeight = FontWeight.Black)
                 Column(modifier = Modifier.padding(start = 10.dp)) {
                     discoveredCharacteristics[serviceUuid]?.forEach {
@@ -50,7 +46,6 @@ fun DeviceScreen(
                     }
                 }
             }
-        }
         Button(onClick = readPassword, enabled = isDeviceConnected && foundTargetService) {
             Text("3. Read Password")
         }
