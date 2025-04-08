@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,7 +18,10 @@ import com.tdcolvin.bleclient.ui.viewmodel.BLEClientViewModel
 
 @SuppressLint("MissingPermission")
 @Composable
-fun MainNavigation(viewModel: BLEClientViewModel = viewModel()) {
+fun MainNavigation(
+    modifier: Modifier = Modifier,
+    viewModel: BLEClientViewModel = viewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
@@ -30,6 +34,7 @@ fun MainNavigation(viewModel: BLEClientViewModel = viewModel()) {
     }
     else if (uiState.activeDevice == null) {
         ScanningScreen(
+            modifier = modifier,
             isScanning = uiState.isScanning,
             foundDevices = uiState.foundDevices,
             startScanning = viewModel::startScanning,
@@ -42,6 +47,7 @@ fun MainNavigation(viewModel: BLEClientViewModel = viewModel()) {
     }
     else {
         DeviceScreen(
+            modifier = modifier,
             unselectDevice = {
                 viewModel.disconnectActiveDevice()
                 viewModel.setActiveDevice(null)

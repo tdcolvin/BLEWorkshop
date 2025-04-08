@@ -24,6 +24,7 @@ import com.tdcolvin.bleclient.ble.PERMISSION_BLUETOOTH_SCAN
 @Composable
 @RequiresPermission(allOf = [PERMISSION_BLUETOOTH_SCAN, PERMISSION_BLUETOOTH_CONNECT])
 fun ScanningScreen(
+    modifier: Modifier = Modifier,
     isScanning: Boolean,
     foundDevices: List<BluetoothDevice>,
     startScanning: () -> Unit,
@@ -31,7 +32,7 @@ fun ScanningScreen(
     selectDevice: (BluetoothDevice) -> Unit
 ) {
     Column (
-        Modifier.padding(horizontal = 10.dp)
+        modifier.padding(horizontal = 10.dp)
     ){
         if (isScanning) {
             Text("Scanning...")

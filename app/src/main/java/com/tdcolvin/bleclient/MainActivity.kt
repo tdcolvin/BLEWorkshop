@@ -21,7 +21,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.systemBarsPadding().fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   MainNavigation()
+                   MainNavigation(
+                       modifier = Modifier.fillMaxSize()
+                   )
                 }
             }
         }

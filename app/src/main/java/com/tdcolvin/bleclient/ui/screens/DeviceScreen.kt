@@ -18,6 +18,7 @@ import com.tdcolvin.bleclient.ble.DEVFEST_SERVICE_UUID
 
 @Composable
 fun DeviceScreen(
+    modifier: Modifier = Modifier,
     unselectDevice: () -> Unit,
     isDeviceConnected: Boolean,
     discoveredCharacteristics: Map<String, List<String>>,
@@ -31,7 +32,7 @@ fun DeviceScreen(
     val foundTargetService = discoveredCharacteristics.contains(DEVFEST_SERVICE_UUID.toString())
 
     Column(
-        Modifier.scrollable(rememberScrollState(), Orientation.Vertical)
+        modifier.scrollable(rememberScrollState(), Orientation.Vertical)
     ) {
         Button(onClick = connect) {
             Text("1. Connect")
@@ -40,7 +41,7 @@ fun DeviceScreen(
         Button(onClick = discoverServices, enabled = isDeviceConnected) {
             Text("2. Discover Services")
         }
-        LazyColumn {
+        LazyColumn(userScrollEnabled = false) {
             items(discoveredCharacteristics.keys.sorted()) { serviceUuid ->
                 Text(text = serviceUuid, fontWeight = FontWeight.Black)
                 Column(modifier = Modifier.padding(start = 10.dp)) {
