@@ -10,6 +10,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 val CTF_SERVICE_UUID: UUID = UUID.fromString("8c380000-10bd-4fdb-ba21-1922d6cf860d")
@@ -195,14 +196,14 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun readPassword() {
-        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val service = gatt?.getService(CTF_SERVICE_UUID) ?: return
         val characteristic = service.getCharacteristic(PASSWORD_CHARACTERISTIC_UUID) ?: return
         gatt?.readCharacteristic(characteristic)
     }
 
     @RequiresPermission(PERMISSION_BLUETOOTH_CONNECT)
     fun writeName() {
-        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val service = gatt?.getService(CTF_SERVICE_UUID) ?: return
         val characteristic = service.getCharacteristic(NAME_CHARACTERISTIC_UUID) ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             gatt?.writeCharacteristic(characteristic, "Tom".toByteArray(), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
@@ -217,11 +218,9 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     fun startNotifyForFlag2() {
         //TODO: request to start receiving notifications for flag 2, as directed in task 5 above
 
-        val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-
-        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val service = gatt?.getService(CTF_SERVICE_UUID) ?: return
         val characteristic = service.getCharacteristic(FLAG_2_CHARACTERISTIC_UUID) ?: return
-        val notifyDescriptor = characteristic.getDescriptor(cccdUuid) ?: return
+        val notifyDescriptor = characteristic.getDescriptor(CCCD_UUID) ?: return
 
         notifyDescriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
         gatt?.writeDescriptor(notifyDescriptor)
@@ -233,14 +232,12 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
     fun stopNotifyForFlag2() {
         //TODO: stop notifications for flag 2 as directed in task 5 above
 
-        val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-
-        val service = gatt?.getService(DEVFEST_SERVICE_UUID) ?: return
+        val service = gatt?.getService(CTF_SERVICE_UUID) ?: return
         val characteristic = service.getCharacteristic(FLAG_2_CHARACTERISTIC_UUID) ?: return
 
         gatt?.setCharacteristicNotification(characteristic, false)
 
-        val notifyDescriptor = characteristic.getDescriptor(cccdUuid) ?: return
+        val notifyDescriptor = characteristic.getDescriptor(CCCD_UUID) ?: return
         notifyDescriptor.value = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
         gatt?.writeDescriptor(notifyDescriptor)
     }
