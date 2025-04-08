@@ -170,7 +170,7 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
             status: Int
         ) {
             super.onCharacteristicWrite(gatt, characteristic, status)
-            if (status == BluetoothGatt.GATT_SUCCESS && characteristic.value.contentEquals("Tom".toByteArray())) {
+            if (status == BluetoothGatt.GATT_SUCCESS && characteristic.uuid == NAME_CHARACTERISTIC_UUID) {
                 successfulNameWrites.update { it + 1 }
             }
         }
