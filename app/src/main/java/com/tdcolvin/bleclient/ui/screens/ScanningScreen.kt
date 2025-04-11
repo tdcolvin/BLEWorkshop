@@ -50,18 +50,20 @@ fun ScanningScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(foundDevices) { device ->
-                DeviceItem(
-                    deviceName = device.name,
-                    selectDevice = { selectDevice(device) }
-                )
+            items(foundDevices.filter { it.name != null }) { device ->
+                device.name?.let { deviceName ->
+                    DeviceItem(
+                        deviceName = deviceName,
+                        selectDevice = { selectDevice(device) }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun DeviceItem(deviceName: String?, selectDevice: () -> Unit) {
+fun DeviceItem(deviceName: String, selectDevice: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -71,7 +73,7 @@ fun DeviceItem(deviceName: String?, selectDevice: () -> Unit) {
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
-                text = deviceName ?: "[Unnamed]",
+                text = deviceName,
                 textAlign = TextAlign.Center,
             )
             Button(onClick = selectDevice) {
